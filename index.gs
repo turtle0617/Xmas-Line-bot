@@ -1,5 +1,23 @@
 const reply_url = 'https://api.line.me/v2/bot/message/reply';
 const profile_url = 'https://api.line.me/v2/bot/profile/';
+const push_url = 'https://api.line.me/v2/bot/message/push';
+
+function pushMessage(msg, userId) {
+    UrlFetchApp.fetch(push_url, {
+        'headers': {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer ' + CHANNEL_ACCESS_TOKEN,
+        },
+        'method': 'post',
+        'payload': JSON.stringify({
+            'to': userId,
+            'messages': [{
+                type: 'text',
+                text: msg,
+            }]
+        }),
+    });
+}
 
 function doGet(e) {
     Logger.log('doget success')
