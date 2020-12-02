@@ -7,7 +7,6 @@ function doGet(e) {
 
 function doPost(e) {
     const msg = JSON.parse(e.postData.contents);
-    log('doPost argument json parse format :>>', msg);
     const { userMessage, userId, replyToken } = parseUserMessage(msg);
 
     if (!replyToken || !userId || !userMessage) {
@@ -50,9 +49,13 @@ function parseMessageKeyWord(msg, userId, token) {
             replyMessage('已經選擇過禮物呦～，想要更改請照以下格式輸入『聖誕禮物更改 老闆的跑車』', token);
         } else {
             const gift = msg.replace('聖誕禮物', '').trim();
-            const { name, picture } = getUserProfile(userId);
-            appendInToSheet([userId, name, picture, gift]);
-            replyMessage('已儲存你想要的禮物，請靜候佳音～', token);
+            if (gift) {
+                const { name, picture } = getUserProfile(userId);
+                appendInToSheet([userId, name, picture, gift]);
+                replyMessage(`你想要的禮物是『${gift}』。\n已儲存你想要的禮物，請靜候佳音～`, token);
+            } else {
+                replyMessage('哎呀，你的禮物空空如也呢！\n再給你一次機會選擇自己想要的禮物吧！', token);
+            }
         }
     } else {
         if (userExist) {
