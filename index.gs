@@ -55,10 +55,13 @@ function parseMessageKeyWord(msg, userId, token) {
     if (msg.includes('聖誕禮物更改')) {
         if (userExist) {
             const gift = msg.replace('聖誕禮物更改', '').trim();
+            if (!gift) {
+                return replyMessage('沒打禮物還敢更改R，再給你一次機會！', token);
+            }
             const giftsTitlePosition = findTextPositionFromSheet('gift');
             const [colSymbol, rowIndex] = findTextPositionFromSheet(userId);
             setInToSheet(`${giftsTitlePosition[0]}${rowIndex}`, gift)
-            replyMessage('已經幫你更改生日禮物囉，吼吼吼', token);
+            replyMessage('已經幫你更改聖誕禮物囉，hohoho', token);
         } else {
             defaultNotExistReplyMessage();
         }
