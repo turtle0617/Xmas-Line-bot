@@ -11,7 +11,7 @@ function getAllSheetValue() {
     const lastRow = sheet.getLastRow();
     const lastColumnSymbol = String.fromCharCode(startRowSymbolASCII + sheet.getLastColumn() - 1);
     const values =  sheet.getRange(`A1:${lastColumnSymbol}${lastRow}`).getValues();
-    return sheet.getRange(`A0:${lastColumnSymbol}${lastRow}`).getValues();
+    return sheet.getRange(`A1:${lastColumnSymbol}${lastRow}`).getValues();
 }
 
 function getSheetColunmOfRowValue(row, startIndex = 1) {

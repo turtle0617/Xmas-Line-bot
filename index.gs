@@ -2,6 +2,58 @@ const reply_url = 'https://api.line.me/v2/bot/message/reply';
 const profile_url = 'https://api.line.me/v2/bot/profile/';
 const push_url = 'https://api.line.me/v2/bot/message/push';
 
+function shuffle(arr) {
+    var i,
+        j,
+        temp;
+    for (i = arr.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+    return arr;
+};
+
+function lottery() {
+    function chooseUser(list, currentId) {
+        const selfIndex = list.findIndex(o => o === currentId)
+        const excludeSelfList = selfIndex !== -1 ? [...list.slice(0, selfIndex), ...list.slice(selfIndex + 1)] : list;
+        const shuffleList = shuffle(excludeSelfList);
+        const chooseUserId = shuffleList.shift();
+        if (selfIndex !== -1) {
+            shuffleList.push(currentId);
+        }
+        return {
+            id: chooseUserId,
+            list: shuffleList,
+        }
+    }
+    // const [header, ...infoList] = values;
+    const [header, ...infoList] = getAllSheetValue();
+    const userIdOfGiftMap = infoList.reduce((map, giftInfo) => {
+        map[giftInfo[0]] = {
+            id: giftInfo[0],
+            name: giftInfo[1],
+            pic: giftInfo[2],
+            gift: giftInfo[3],
+        };
+        return map;
+    }, {})
+    let idList = infoList.map(o => o[0]);
+    const lotteryMap = infoList.reduce((map, info, index, arr) => {
+        const selfId = info[0];
+        const { id, list } = chooseUser(idList, selfId)
+        idList = list;
+        map[selfId] = {
+            ...userIdOfGiftMap[selfId],
+            lottery: userIdOfGiftMap[id]
+        }
+        return map
+    }, {})
+    return lotteryMap
+}
+
 function pushMessage(msg, userId) {
     UrlFetchApp.fetch(push_url, {
         'headers': {
