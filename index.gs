@@ -31,7 +31,12 @@ function lottery() {
         });
         return map;
     }, [])
-    return lotteryMap;
+
+    lotteryMap.forEach((item, _, arr) => {
+        const { id, name, lottery } = item;
+        const giftMsg = (name, otherName, gift) => (`嗨～${name}!恭喜你抽到 ${otherName} ！\n他對禮物的描述是${gift}。\n你猜得到他想要的是什麼嗎～，去買吧！在聖誕節那天給他個驚喜！！`)
+        pushMessage(id, giftMsg(name, lottery.name, lottery.gift))
+    })
 }
 
 function pushMessage(msg, userId) {
