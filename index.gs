@@ -2,34 +2,14 @@ const reply_url = 'https://api.line.me/v2/bot/message/reply';
 const profile_url = 'https://api.line.me/v2/bot/profile/';
 const push_url = 'https://api.line.me/v2/bot/message/push';
 
-function shuffle(arr) {
-    var i,
-        j,
-        temp;
-    for (i = arr.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-    return arr;
-};
-
+function getRandom(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+}
 function lottery() {
-    function chooseUser(list, currentId) {
-        const selfIndex = list.findIndex(o => o === currentId)
-        const excludeSelfList = selfIndex !== -1 ? [...list.slice(0, selfIndex), ...list.slice(selfIndex + 1)] : list;
-        const shuffleList = shuffle(excludeSelfList);
-        const chooseUserId = shuffleList.shift();
-        if (selfIndex !== -1) {
-            shuffleList.push(currentId);
-        }
-        return {
-            id: chooseUserId,
-            list: shuffleList,
-        }
+    function chooseUser(list, currentIndex, shiftNumber) {
+        const num$ = (shiftNumber + currentIndex) % list.length;
+        return list[num$];
     }
-    // const [header, ...infoList] = values;
     const [header, ...infoList] = getAllSheetValue();
     const userIdOfGiftMap = infoList.reduce((map, giftInfo) => {
         map[giftInfo[0]] = {
@@ -40,18 +20,18 @@ function lottery() {
         };
         return map;
     }, {})
-    let idList = infoList.map(o => o[0]);
+    const idList = infoList.map(o => o[0]);
+    const shiftNumber = getRandom(1, infoList.length);
     const lotteryMap = infoList.reduce((map, info, index, arr) => {
         const selfId = info[0];
-        const { id, list } = chooseUser(idList, selfId)
-        idList = list;
-        map[selfId] = {
+        const id = chooseUser(idList, index, shiftNumber)
+        map.push({
             ...userIdOfGiftMap[selfId],
             lottery: userIdOfGiftMap[id]
-        }
-        return map
-    }, {})
-    return lotteryMap
+        });
+        return map;
+    }, [])
+    return lotteryMap;
 }
 
 function pushMessage(msg, userId) {
