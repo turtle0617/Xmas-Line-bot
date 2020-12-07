@@ -91,14 +91,14 @@ function parseMessageKeyWord(msg, userId, token) {
     const defaultNotExistReplyMessage = (prefix) => replyMessage(`你傳了『${msg}』\n你還沒有選擇想要的禮物呦～,請照以下格式輸入『聖誕禮物 加薪』來選擇你想要的禮物`, token);
     if (msg.includes('聖誕禮物更改')) {
         if (userExist) {
-            const gift = msg.replace('聖誕禮物更改', '').trim();
+            const gift = msg.split('聖誕禮物更改')[1].trim();
             if (!gift) {
                 return replyMessage('沒打禮物還敢更改R，再給你一次機會！', token);
             }
             const giftsTitlePosition = findTextPositionFromSheet('gift');
             const [colSymbol, rowIndex] = findTextPositionFromSheet(userId);
             setInToSheet(`${giftsTitlePosition[0]}${rowIndex}`, gift)
-            replyMessage('已經幫你更改聖誕禮物囉，hohoho', token);
+            replyMessage(`已經幫你更改聖誕禮物為『${gift}』，hohoho`, token);
         } else {
             defaultNotExistReplyMessage();
         }
@@ -106,7 +106,7 @@ function parseMessageKeyWord(msg, userId, token) {
         if (userExist) {
             replyMessage('已經選擇過禮物呦～，想要更改請照以下格式輸入『聖誕禮物更改 老闆的跑車』', token);
         } else {
-            const gift = msg.replace('聖誕禮物', '').trim();
+            const gift = msg.split('聖誕禮物')[1].trim();
             if (gift) {
                 const { name, picture } = getUserProfile(userId);
                 appendInToSheet([userId, name, picture, gift]);
