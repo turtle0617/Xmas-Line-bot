@@ -39,7 +39,7 @@ function lottery() {
     })
 }
 
-function pushMessage(msg, userId) {
+function pushMessage(userId, msg) {
     UrlFetchApp.fetch(push_url, {
         'headers': {
             'Content-Type': 'application/json; charset=UTF-8',
